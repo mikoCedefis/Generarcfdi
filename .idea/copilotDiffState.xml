@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/.gitignore">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/.gitignore" />
+              <option name="updatedContent" value="# IntelliJ&#10;.idea/&#10;*.iml&#10;&#10;# Maven / Java&#10;target/&#10;*.class&#10;*.log&#10;&#10;# OS&#10;.DS_Store&#10;&#10;# Sensitive keys and keystores&#10;src/main/resources/csd/*.key&#10;src/main/resources/csd/*.jks&#10;src/main/resources/csd/*.keystore&#10;&#10;# Eclipse&#10;.classpath&#10;.project&#10;&#10;# Generated sources&#10;generated-sources/&#10;&#10;# Others&#10;out/&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/README.md">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/README.md" />
+              <option name="updatedContent" value="Proyecto generar_cfdi&#10;&#10;Instrucciones rápidas para subir a GitHub:&#10;&#10;1) Revisa que los archivos sensibles no se añadan al repositorio.&#10;   - Este proyecto contiene claves en `src/main/resources/csd/`.&#10;   - El `.gitignore` ya excluye `*.key` en esa carpeta, pero si quieres conservar una copia segura, muévela fuera del árbol del proyecto.&#10;&#10;2) Inicializar el repositorio local y hacer el primer commit (ya ejecutado por este asistente):&#10;   git init&#10;   git add .&#10;   git commit -m &quot;Initial commit&quot;&#10;&#10;3) Crear un repositorio remoto en GitHub:&#10;   - Desde la web: https://github.com/new -&gt; crea un repo (por ejemplo: generar_cfdi).&#10;   - O con la CLI de GitHub (si la tienes): gh repo create &lt;usuario&gt;/generar_cfdi --public --source=. --remote=origin&#10;&#10;4) Añadir el remoto y subir:&#10;   git remote add origin https://github.com/&lt;usuario&gt;/generar_cfdi.git&#10;   git branch -M main&#10;   git push -u origin main&#10;&#10;Notas y buenas prácticas:&#10;- Nunca comiences un repositorio público con claves privadas; si ya las subiste, rota las claves y elimina el historial con herramientas como `git filter-repo` o `bfg`.&#10;- Considera añadir un archivo `LICENSE` si quieres especificar la licencia.&#10;- Puedes añadir un `.github/workflows/ci.yml` más adelante para CI.&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Comprobante xmlns="http://www.sat.gob.mx/cfd/4" Version="4.0" Fecha="2026-03-13T17:27:56" SubTotal="100.00" Moneda="MXN" Total="100.00" TipoDeComprobante="I" LugarExpedicion="64000">
+    <Emisor Rfc="AAA010101AAA" Nombre="EMPRESA DE PRUEBA SA DE CV" RegimenFiscal="601"/>
+    <Receptor Rfc="XAXX010101000" Nombre="PUBLICO GENERAL" DomicilioFiscalReceptor="64000" RegimenFiscalReceptor="616" UsoCFDI="G03"/>
+    <Conceptos>
+        <Concepto ClaveProdServ="86121500" Cantidad="1" ClaveUnidad="E48" Descripcion="Pago de colegiatura" ValorUnitario="100.00" Importe="100.00"/>
+    </Conceptos>
+</Comprobante>
