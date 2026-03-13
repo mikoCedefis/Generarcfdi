@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Generarcfdi
 =======
 Proyecto generar_cfdi
@@ -55,3 +56,5 @@ generated-sources/
 out/
 
 >>>>>>> bc98c9c (Initial commit)
+=======
+>>>>>>> 6bacf49 (segundo commit)

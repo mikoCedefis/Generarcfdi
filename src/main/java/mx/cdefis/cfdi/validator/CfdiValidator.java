@@ -1,6 +1,7 @@
 package mx.cdefis.cfdi.validator;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -10,13 +11,20 @@ import java.io.File;
 
 public class CfdiValidator {
 
-    public static void validate(String xmlPath, String xsdPath) {
+    public static void validate(String xmlPath, String... xsdPaths) {
         try {
 
             SchemaFactory factory =
                     SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            Schema schema = factory.newSchema(new File(xsdPath));
+            // cargar multiples xsd
+            Source[] schemas = new Source[xsdPaths.length];
+
+            for (int i = 0; i < xsdPaths.length; i++) {
+                schemas[i] = new StreamSource(new File(xsdPaths[i]));
+            }
+
+            Schema schema = factory.newSchema(schemas);
 
             Validator validator = schema.newValidator();
 

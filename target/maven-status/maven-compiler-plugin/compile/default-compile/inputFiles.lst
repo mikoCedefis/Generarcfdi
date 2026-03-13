@@ -1,3 +1,8 @@
+/Users/cdefis/IdeaProjects/generar_cfdi/src/main/java/mx/cdefis/cfdi/Main.java
+/Users/cdefis/IdeaProjects/generar_cfdi/src/main/java/mx/cdefis/cfdi/cadena/CfdiCadenaOriginalGenerator.java
+/Users/cdefis/IdeaProjects/generar_cfdi/src/main/java/mx/cdefis/cfdi/package-info.java
+/Users/cdefis/IdeaProjects/generar_cfdi/src/main/java/mx/cdefis/cfdi/sign/CfdiSigner.java
+/Users/cdefis/IdeaProjects/generar_cfdi/src/main/java/mx/cdefis/cfdi/validator/CfdiValidator.java
 /Users/cdefis/IdeaProjects/generar_cfdi/target/generated-sources/jaxb/mx/cdefis/cfdi/model/CEstado.java
 /Users/cdefis/IdeaProjects/generar_cfdi/target/generated-sources/jaxb/mx/cdefis/cfdi/model/CMetodoPago.java
 /Users/cdefis/IdeaProjects/generar_cfdi/target/generated-sources/jaxb/mx/cdefis/cfdi/model/CMoneda.java
