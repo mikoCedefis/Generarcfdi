@@ -1,4 +1,4 @@
-package mx.cdefis.cfdi;
+package mx.cdefis.cfdi.builder;
 
 import mx.cdefis.cfdi.model.*;
 
@@ -8,158 +8,172 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.GregorianCalendar;
+import jakarta.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
-public class GeneradorIEDU {
+public class GeneradorIEDU implements CfdiBuilder {
 
-    public static Comprobante generar(boolean conIVA) throws Exception {
+    private final boolean conIVA;
 
-        Comprobante comprobante = new Comprobante();
+    public GeneradorIEDU(boolean conIVA) {
+        this.conIVA = conIVA;
+    }
 
-        // =====================
-        // FECHA
-        // =====================
-        GregorianCalendar cal = new GregorianCalendar();
+    @Override
+    public Comprobante build() throws Exception {
 
-        XMLGregorianCalendar fecha =
-                DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+        try {
 
-        fecha.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        fecha.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+            Comprobante comprobante = new Comprobante();
 
-        // =====================
-        // BASE
-        // =====================
-        BigDecimal base = new BigDecimal("100.00").setScale(2, RoundingMode.HALF_UP);
+            // =====================
+            // FECHA
+            // =====================
+            GregorianCalendar cal = new GregorianCalendar();
 
-        // =====================
-        // DATOS CFDI
-        // =====================
-        comprobante.setVersion("4.0");
-        comprobante.setTipoDeComprobante(CTipoDeComprobante.I);
-        comprobante.setFecha(fecha);
-        comprobante.setSubTotal(base);
-        comprobante.setMoneda(CMoneda.MXN);
-        comprobante.setLugarExpedicion("58260");
-        comprobante.setExportacion("01");
-        comprobante.setMetodoPago(CMetodoPago.PUE);
-        comprobante.setFormaPago("01");
+            XMLGregorianCalendar fecha =
+                    DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 
-        // =====================
-        // EMISOR
-        // =====================
-        Comprobante.Emisor emisor = new Comprobante.Emisor();
-        emisor.setRfc("EKU9003173C9");
-        emisor.setNombre("ESCUELA KEMPER URGATE");
-        emisor.setRegimenFiscal("601");
-        comprobante.setEmisor(emisor);
+            fecha.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+            fecha.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 
-        // =====================
-        // RECEPTOR
-        // =====================
-        Comprobante.Receptor receptor = new Comprobante.Receptor();
-        receptor.setRfc("CUSC850516316");
-        receptor.setNombre("CESAR OSBALDO CRUZ SOLORZANO");
-        receptor.setUsoCFDI(CUsoCFDI.D_10);
-        receptor.setDomicilioFiscalReceptor("45638");
-        receptor.setRegimenFiscalReceptor("605");
-        comprobante.setReceptor(receptor);
+            BigDecimal base = new BigDecimal("100.00").setScale(2, RoundingMode.HALF_UP);
 
-        // =====================
-        // CONCEPTO
-        // =====================
-        Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
-        Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
+            // =====================
+            // DATOS CFDI
+            // =====================
+            comprobante.setVersion("4.0");
+            comprobante.setTipoDeComprobante(CTipoDeComprobante.I);
+            comprobante.setFecha(fecha);
+            comprobante.setSubTotal(base);
+            comprobante.setMoneda(CMoneda.MXN);
+            comprobante.setLugarExpedicion("58260");
+            comprobante.setExportacion("01");
+            comprobante.setMetodoPago(CMetodoPago.PUE);
+            comprobante.setFormaPago("01");
 
-        concepto.setClaveProdServ("86121500");
-        concepto.setCantidad(BigDecimal.ONE);
-        concepto.setClaveUnidad("E48");
-        concepto.setDescripcion("Colegiatura bachillerato");
-        concepto.setValorUnitario(base);
-        concepto.setImporte(base);
+            // =====================
+            // EMISOR
+            // =====================
+            Comprobante.Emisor emisor = new Comprobante.Emisor();
+            emisor.setRfc("EKU9003173C9");
+            emisor.setNombre("ESCUELA KEMPER URGATE");
+            emisor.setRegimenFiscal("601");
+            comprobante.setEmisor(emisor);
 
-        // =====================
-        // COMPLEMENTO IEDU
-        // =====================
-        InstEducativas iedu = new InstEducativas();
-        iedu.setNombreAlumno("JUAN PEREZ LOPEZ");
-        iedu.setCurp("PELO800101HDFRRL09");
-        iedu.setNivelEducativo("Bachillerato o su equivalente");
-        iedu.setAutRVOE("123456");
+            // =====================
+            // RECEPTOR
+            // =====================
+            Comprobante.Receptor receptor = new Comprobante.Receptor();
+            receptor.setRfc("CUSC850516316");
+            receptor.setNombre("CESAR OSBALDO CRUZ SOLORZANO");
+            receptor.setUsoCFDI(CUsoCFDI.D_10);
+            receptor.setDomicilioFiscalReceptor("45638");
+            receptor.setRegimenFiscalReceptor("605");
+            comprobante.setReceptor(receptor);
 
-        Comprobante.Conceptos.Concepto.ComplementoConcepto complemento =
-                new Comprobante.Conceptos.Concepto.ComplementoConcepto();
+            // =====================
+            // CONCEPTO
+            // =====================
+            Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
+            Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
 
-        complemento.getAny().add(iedu);
-        concepto.setComplementoConcepto(complemento);
+            concepto.setClaveProdServ("86121500");
+            concepto.setCantidad(BigDecimal.ONE);
+            concepto.setClaveUnidad("E48");
+            concepto.setDescripcion("Colegiatura bachillerato");
+            concepto.setValorUnitario(base);
+            concepto.setImporte(base);
 
-        // =====================
-        // LOGICA IVA / NO IVA
-        // =====================
-        if (conIVA) {
+            // =====================
+            // COMPLEMENTO IEDU
+            // =====================
+            InstEducativas iedu = new InstEducativas();
+            iedu.setNombreAlumno("JUAN PEREZ LOPEZ");
+            iedu.setCurp("PELO800101HDFRRL09");
+            iedu.setNivelEducativo("Bachillerato o su equivalente");
+            iedu.setAutRVOE("123456");
 
-            // OBJETO IMPUESTO
-            concepto.setObjetoImp("02");
+            Comprobante.Conceptos.Concepto.ComplementoConcepto complemento =
+                    new Comprobante.Conceptos.Concepto.ComplementoConcepto();
 
-            BigDecimal tasa = new BigDecimal("0.16");
-            BigDecimal iva = base.multiply(tasa).setScale(2, RoundingMode.HALF_UP);
+            QName qName = new QName(
+                    "http://www.sat.gob.mx/iedu",
+                    "instEducativas",
+                    "iedu"
+            );
 
-            // ===== IMPUESTOS CONCEPTO =====
-            Comprobante.Conceptos.Concepto.Impuestos impConcepto =
-                    new Comprobante.Conceptos.Concepto.Impuestos();
+            JAXBElement<InstEducativas> element =
+                    new JAXBElement<>(qName, InstEducativas.class, iedu);
 
-            Comprobante.Conceptos.Concepto.Impuestos.Traslados trasladosConcepto =
-                    new Comprobante.Conceptos.Concepto.Impuestos.Traslados();
+            complemento.getAny().add(element);
+            concepto.setComplementoConcepto(complemento);
 
-            Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado trasladoConcepto =
-                    new Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado();
+            // =====================
+            // IMPUESTOS
+            // =====================
+            if (conIVA) {
 
-            trasladoConcepto.setBase(base);
-            trasladoConcepto.setImpuesto("002");
-            trasladoConcepto.setTipoFactor(CTipoFactor.TASA);
-            trasladoConcepto.setTasaOCuota(new BigDecimal("0.160000"));
-            trasladoConcepto.setImporte(iva);
+                concepto.setObjetoImp("02");
 
-            trasladosConcepto.getTraslado().add(trasladoConcepto);
-            impConcepto.setTraslados(trasladosConcepto);
+                BigDecimal tasa = new BigDecimal("0.16");
+                BigDecimal iva = base.multiply(tasa).setScale(2, RoundingMode.HALF_UP);
 
-            concepto.setImpuestos(impConcepto);
+                // CONCEPTO
+                Comprobante.Conceptos.Concepto.Impuestos impConcepto =
+                        new Comprobante.Conceptos.Concepto.Impuestos();
 
-            // ===== IMPUESTOS GLOBAL =====
-            Comprobante.Impuestos impuestos = new Comprobante.Impuestos();
+                Comprobante.Conceptos.Concepto.Impuestos.Traslados trasladosConcepto =
+                        new Comprobante.Conceptos.Concepto.Impuestos.Traslados();
 
-            Comprobante.Impuestos.Traslados traslados =
-                    new Comprobante.Impuestos.Traslados();
+                Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado trasladoConcepto =
+                        new Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado();
 
-            Comprobante.Impuestos.Traslados.Traslado traslado =
-                    new Comprobante.Impuestos.Traslados.Traslado();
+                trasladoConcepto.setBase(base);
+                trasladoConcepto.setImpuesto("002");
+                trasladoConcepto.setTipoFactor(CTipoFactor.TASA);
+                trasladoConcepto.setTasaOCuota(new BigDecimal("0.160000"));
+                trasladoConcepto.setImporte(iva);
 
-            traslado.setBase(base);
-            traslado.setImpuesto("002");
-            traslado.setTipoFactor(CTipoFactor.TASA);
-            traslado.setTasaOCuota(new BigDecimal("0.160000"));
-            traslado.setImporte(iva);
+                trasladosConcepto.getTraslado().add(trasladoConcepto);
+                impConcepto.setTraslados(trasladosConcepto);
+                concepto.setImpuestos(impConcepto);
 
-            traslados.getTraslado().add(traslado);
-            impuestos.setTraslados(traslados);
-            impuestos.setTotalImpuestosTrasladados(iva);
+                // GLOBAL
+                Comprobante.Impuestos impuestos = new Comprobante.Impuestos();
 
-            comprobante.setImpuestos(impuestos);
+                Comprobante.Impuestos.Traslados traslados =
+                        new Comprobante.Impuestos.Traslados();
 
-            comprobante.setTotal(base.add(iva));
+                Comprobante.Impuestos.Traslados.Traslado traslado =
+                        new Comprobante.Impuestos.Traslados.Traslado();
 
-        } else {
+                traslado.setBase(base);
+                traslado.setImpuesto("002");
+                traslado.setTipoFactor(CTipoFactor.TASA);
+                traslado.setTasaOCuota(new BigDecimal("0.160000"));
+                traslado.setImporte(iva);
 
-            // SIN IVA (EXENTO / NO OBJETO)
-            concepto.setObjetoImp("01");
+                traslados.getTraslado().add(traslado);
+                impuestos.setTraslados(traslados);
+                impuestos.setTotalImpuestosTrasladados(iva);
 
-            comprobante.setTotal(base);
+                comprobante.setImpuestos(impuestos);
+                comprobante.setTotal(base.add(iva).setScale(2, RoundingMode.HALF_UP));
 
-            // NO impuestos en ningún nivel
+            } else {
+
+                concepto.setObjetoImp("01");
+                comprobante.setTotal(base);
+            }
+
+            conceptos.getConcepto().add(concepto);
+            comprobante.setConceptos(conceptos);
+
+            return comprobante;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error construyendo CFDI IEDU", e);
         }
-
-        conceptos.getConcepto().add(concepto);
-        comprobante.setConceptos(conceptos);
-
-        return comprobante;
     }
 }

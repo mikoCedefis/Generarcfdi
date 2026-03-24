@@ -1,5 +1,8 @@
 package mx.cdefis.cfdi;
 
+import mx.cdefis.cfdi.builder.CfdiBuilder;
+import mx.cdefis.cfdi.builder.GeneradorIngresoGeneral;
+import mx.cdefis.cfdi.builder.GeneradorIEDU;
 import mx.cdefis.cfdi.model.Comprobante;
 
 public class Main {
@@ -7,23 +10,17 @@ public class Main {
     public static void main(String[] args) {
         try {
 
-            // IEDU SIN IVA (lo más común)
-            //Comprobante comprobante = GeneradorIEDU.generar(false);
+            // Generar Ingresos
+           CfdiBuilder builder = new GeneradorIngresoGeneral(true);
 
-            // IEDU CON IVA (si lo necesitas)
-            // Comprobante comprobante = GeneradorIEDU.generar(true);
+           CfdiProcessor.process(builder, false);
 
-            // INGRESO NORMAL CON IVA
-             Comprobante comprobante = GeneradorIngresoGeneral.generar(false);
+            // Generar IEDU
+            //CfdiBuilder builder = new GeneradorIEDU(false);
 
-            // INGRESO SIN IVA
-            // Comprobante comprobante = GeneradorIngresoGeneral.generar(false);
+            //CfdiProcessor.process(builder, true);
 
 
-            // =========================
-            // PROCESAR (FIRMAR + XML + VALIDAR)
-            // =========================
-            CfdiProcessor.process(comprobante, null);
 
             System.out.println("✅ CFDI generado correctamente");
 

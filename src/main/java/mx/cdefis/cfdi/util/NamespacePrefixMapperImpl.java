@@ -11,12 +11,12 @@ public class NamespacePrefixMapperImpl extends NamespacePrefixMapper {
             return "cfdi";
         }
 
-        if ("http://www.sat.gob.mx/iedu".equals(namespaceUri)) {
-            return "iedu";
-        }
-
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(namespaceUri)) {
             return "xsi";
+        }
+
+        if ("http://www.sat.gob.mx/iedu".equals(namespaceUri)) {
+            return "iedu";
         }
 
         return suggestion;
