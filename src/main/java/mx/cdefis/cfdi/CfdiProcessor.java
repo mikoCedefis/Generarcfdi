@@ -27,13 +27,9 @@ public class CfdiProcessor {
         // =====================
         // JAXB CONTEXT
         // =====================
-        JAXBContext context;
-
-        if (usarIEDU) {
-            context = JAXBContext.newInstance(Comprobante.class, InstEducativas.class);
-        } else {
-            context = JAXBContext.newInstance(Comprobante.class);
-        }
+        JAXBContext context = usarIEDU
+                ? JAXBContext.newInstance(Comprobante.class, InstEducativas.class)
+                : JAXBContext.newInstance(Comprobante.class);
 
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -43,7 +39,7 @@ public class CfdiProcessor {
         );
 
         // =====================
-        // SCHEMA LOCATION (CLAVE)
+        // SCHEMA LOCATION
         // =====================
         if (usarIEDU) {
             marshaller.setProperty(
@@ -75,15 +71,24 @@ public class CfdiProcessor {
         comprobante.setNoCertificado(noCertificado);
 
         // =====================
+        // DIRECTORIO TEMPORAL
+        // =====================
+        Path tempDir = Path.of("logs/xml");
+        Files.createDirectories(tempDir);
+
+        Path xmlSinSello = tempDir.resolve("cfdi.xml");
+        Path xmlFirmadoPath = tempDir.resolve("cfdi_firmado.xml");
+
+        // =====================
         // XML SIN SELLO
         // =====================
-        marshaller.marshal(comprobante, new File("cfdi.xml"));
+        marshaller.marshal(comprobante, xmlSinSello.toFile());
 
         // =====================
         // CADENA ORIGINAL
         // =====================
         String cadena = CfdiCadenaOriginalGenerator.generarCadena(
-                "cfdi.xml",
+                xmlSinSello.toString(),
                 "src/main/resources/xslt/cadenaoriginal_4_0.xslt"
         );
 
@@ -99,61 +104,81 @@ public class CfdiProcessor {
         // =====================
         // XML FIRMADO
         // =====================
-        marshaller.marshal(comprobante, new File("cfdi_firmado.xml"));
+        marshaller.marshal(comprobante, xmlFirmadoPath.toFile());
 
         // =====================
         // TIMBRADO
         // =====================
         FinkokTimbrador timbrador = new FinkokTimbrador();
 
-        String xmlFirmado = Files.readString(Path.of("cfdi_firmado.xml"));
-        String xmlTimbrado = timbrador.timbrar(xmlFirmado);
+        try {
+            String xmlFirmado = Files.readString(xmlFirmadoPath);
+            String xmlTimbrado = timbrador.timbrar(xmlFirmado);
 
+            String uuid = XmlUtils.extraerUUID(xmlTimbrado);
 
-        String uuid = XmlUtils.extraerUUID(xmlTimbrado);
+            LocalDate fecha = LocalDate.now();
+            Path baseDir = Path.of("storage/cfdi/timbrados");
 
-        // Fecha actual (puedes cambiarla por la del comprobante si quieres)
-        LocalDate fecha = LocalDate.now();
+            Path dir = baseDir
+                    .resolve(String.valueOf(fecha.getYear()))
+                    .resolve(String.format("%02d", fecha.getMonthValue()));
 
-        // Ruta base correcta
-        Path baseDir = Path.of("storage/cfdi/timbrados");
-
-        // Año y mes
-        String year = String.valueOf(fecha.getYear());
-        String month = String.format("%02d", fecha.getMonthValue());
-
-        // Construcción de carpeta
-        Path dir = baseDir.resolve(year).resolve(month);
-
-        // Crear carpetas automáticamente
-        if (!Files.exists(dir)) {
             Files.createDirectories(dir);
-        }
 
-        // Archivo final (UUID.xml)
-        Path file = dir.resolve(uuid + ".xml");
+            Path file = dir.resolve(uuid + ".xml");
 
-        // Guardar XML
-        Files.writeString(file, xmlTimbrado, StandardCharsets.UTF_8);
 
-        System.out.println("XML guardado en: " + file.toAbsolutePath());
 
-        // =====================
-        // VALIDACIÓN
-        // =====================
-        if (usarIEDU) {
-            CfdiValidator.validate(
-                    "cfdi_timbrado.xml",
-                    "src/main/resources/xsd/cfdv40.xsd",
-                    "src/main/resources/xsd/iedu.xsd",
-                    "src/main/resources/xsd/TimbreFiscalDigitalv11.xsd"
+            Files.writeString(file, xmlTimbrado, StandardCharsets.UTF_8);
+
+            System.out.println("XML guardado en: " + file.toAbsolutePath());
+
+            // =====================
+            // VALIDACIÓN
+            // =====================
+            if (usarIEDU) {
+                CfdiValidator.validate(
+                        file.toString(),
+                        "src/main/resources/xsd/cfdv40.xsd",
+                        "src/main/resources/xsd/iedu.xsd",
+                        "src/main/resources/xsd/TimbreFiscalDigitalv11.xsd"
+                );
+            } else {
+                CfdiValidator.validate(
+                        file.toString(),
+                        "src/main/resources/xsd/cfdv40.xsd",
+                        "src/main/resources/xsd/TimbreFiscalDigitalv11.xsd"
+                );
+            }
+
+            System.out.println("✅ CFDI timbrado correctamente");
+
+        } catch (Exception e) {
+
+            // =====================
+            // LOG DE ERRORES
+            // =====================
+            Path errorDir = Path.of("logs/errors");
+            Files.createDirectories(errorDir);
+
+            String ts = String.valueOf(System.currentTimeMillis());
+
+            Files.writeString(
+                    errorDir.resolve("cfdi_error_" + ts + ".xml"),
+                    Files.readString(xmlSinSello),
+                    StandardCharsets.UTF_8
             );
-        } else {
-            CfdiValidator.validate(
-                    "cfdi_timbrado.xml",
-                    "src/main/resources/xsd/cfdv40.xsd",
-                    "src/main/resources/xsd/TimbreFiscalDigitalv11.xsd"
+
+            Files.writeString(
+                    errorDir.resolve("cfdi_firmado_error_" + ts + ".xml"),
+                    Files.readString(xmlFirmadoPath),
+                    StandardCharsets.UTF_8
             );
+
+            System.out.println("❌ Error en timbrado. XMLs guardados para debug");
+
+            throw e;
         }
 
         System.out.println("✅ CFDI timbrado correctamente");

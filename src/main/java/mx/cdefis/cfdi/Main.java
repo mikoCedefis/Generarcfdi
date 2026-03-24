@@ -11,18 +11,15 @@ public class Main {
         try {
 
             // Generar Ingresos
-           CfdiBuilder builder = new GeneradorIngresoGeneral(true);
+           //CfdiBuilder builder = new GeneradorIngresoGeneral(true);
 
-           CfdiProcessor.process(builder, false);
+           //CfdiProcessor.process(builder, false);
 
             // Generar IEDU
-            //CfdiBuilder builder = new GeneradorIEDU(false);
+            CfdiBuilder builder = new GeneradorIEDU(false);
 
-            //CfdiProcessor.process(builder, true);
+            CfdiProcessor.process(builder, true);
 
-
-
-            System.out.println("✅ CFDI generado correctamente");
 
         } catch (Exception e) {
             System.out.println("❌ Error al generar CFDI:");
