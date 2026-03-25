@@ -9,8 +9,10 @@ target/
 # OS
 .DS_Store
 
-# Logs
-logs/
+target/
+*.class
+# IntelliJ
+# *.iml
 
 # Env
 .env
