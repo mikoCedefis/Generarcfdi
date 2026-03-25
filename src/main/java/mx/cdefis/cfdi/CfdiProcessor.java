@@ -152,8 +152,6 @@ public class CfdiProcessor {
                 );
             }
 
-            System.out.println("✅ CFDI timbrado correctamente");
-
         } catch (Exception e) {
 
             // =====================

@@ -27,7 +27,25 @@ import java.time.format.DateTimeFormatter;
 
 public class FinkokTimbrador {
 
+    private static String LAST_SOAP_RESPONSE;
+
     private final Application port;
+    private String extraerTag(String xml, String tag) {
+        try {
+            // Regex que ignora namespaces (ej: <s0:CodigoError>)
+            String regex = "<(?:\\w+:)?" + tag + ">(.*?)</(?:\\w+:)?" + tag + ">";
+
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+            java.util.regex.Matcher matcher = pattern.matcher(xml);
+
+            if (matcher.find()) {
+                return matcher.group(1).trim();
+            }
+
+        } catch (Exception ignored) {}
+
+        return null;
+    }
 
     public FinkokTimbrador() {
         StampSOAP service = new StampSOAP();
@@ -41,7 +59,7 @@ public class FinkokTimbrador {
         bp.getRequestContext().put("com.sun.xml.ws.request.timeout", 20000);
     }
 
-    // Método principal
+    // Metodo principal
     public String timbrar(String xml, String username, String password) {
         try {
             byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
@@ -52,6 +70,11 @@ public class FinkokTimbrador {
                     password
             );
 
+            System.out.println("----- RESPUESTA PAC -----");
+            System.out.println("CodEstatus: " + get(acuse.getCodEstatus()));
+            System.out.println("UUID: " + get(acuse.getUUID()));
+            System.out.println("-------------------------");
+
             String codEstatus = get(acuse.getCodEstatus());
             String uuid = get(acuse.getUUID());
 
@@ -60,8 +83,22 @@ public class FinkokTimbrador {
 
             // Validación mínima (sin duplicar lógica del PAC)
             if (xmlBase64 == null || xmlBase64.trim().isEmpty()) {
+
+                String soap = LAST_SOAP_RESPONSE;
+
+                String codigo = extraerTag(soap, "CodigoError");
+                String mensaje = extraerTag(soap, "MensajeIncidencia");
+
+                System.out.println("❌ Error del PAC (parseado):");
+                System.out.println("CodEstatus: " + codEstatus);
+                System.out.println("UUID: " + uuid);
+                System.out.println("CodigoError: " + codigo);
+                System.out.println("Mensaje: " + mensaje);
+
                 throw new RuntimeException(
-                        "El PAC no devolvió XML timbrado. CodEstatus=" + codEstatus + " UUID=" + uuid
+                        "Error PAC -> CodEstatus=" + codEstatus +
+                                " CodigoError=" + codigo +
+                                " Mensaje=" + mensaje
                 );
             }
 
@@ -150,6 +187,8 @@ public class FinkokTimbrador {
                 context.getMessage().writeTo(baos);
 
                 String msg = baos.toString(StandardCharsets.UTF_8);
+
+                LAST_SOAP_RESPONSE = msg; // Guardar última respuesta para debug
 
                 // =========================
                 // CONSOLA (SIEMPRE)

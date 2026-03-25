@@ -11,14 +11,14 @@ public class Main {
         try {
 
             // Generar Ingresos
-           //CfdiBuilder builder = new GeneradorIngresoGeneral(true);
+           CfdiBuilder builder = new GeneradorIngresoGeneral(false);
 
-           //CfdiProcessor.process(builder, false);
+           CfdiProcessor.process(builder, false);
 
             // Generar IEDU
-            CfdiBuilder builder = new GeneradorIEDU(false);
+            //CfdiBuilder builder = new GeneradorIEDU(true);
 
-            CfdiProcessor.process(builder, true);
+            //CfdiProcessor.process(builder, true);
 
 
         } catch (Exception e) {

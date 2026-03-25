@@ -58,6 +58,7 @@ public class GeneradorIngresoGeneral implements CfdiBuilder {
         receptor.setRfc("XAXX010101000");
         receptor.setNombre("PUBLICO GENERAL");
         receptor.setUsoCFDI(CUsoCFDI.S_01);
+        //receptor.setUsoCFDI(CUsoCFDI.D_10);
         receptor.setDomicilioFiscalReceptor("58260");
         receptor.setRegimenFiscalReceptor("616");
         comprobante.setReceptor(receptor);
