@@ -17,5 +17,8 @@ target/
 # Env
 .env
 
-# xml
-.xml
+
+# Custom folders to ignore
+storage/cfdi/timbrados/
+logs/
+logs/xml/
